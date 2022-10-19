@@ -23,7 +23,7 @@ export class LoginPage implements OnInit {
   passtbinfo: string;
   tbPass2: string;
   pass2tbinfo: string;
-  key: '8jf0¡7wsjf09rfj@odfdjlk-d03ue?d'
+  key: '8jf0¡7wsjf09rfj@odfdjlk-d03ue?dfs'
   crypt: CryptoJS;
   usuario: Users;
   password: string;
