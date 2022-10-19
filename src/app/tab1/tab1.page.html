@@ -1,0 +1,147 @@
+<!-- home.page.html -->
+<ion-header [translucent]="true" (click)="this.inicReg()">
+  <ion-toolbar>
+    <ion-title style="height: 70px;">
+      <img src="../../assets/img/cosas.jpeg"
+        style="margin-left: 10%; width: 30%; height: 80px ; vertical-align: middle;">
+      <button *ngIf="this.userService.login==false" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">Bienvenido</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+      <button *ngIf="this.userService.login==true" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">{{this.userService.ActUser.name}}</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<div *ngIf="s==1" style="margin-top: 5px;">
+  <button *ngIf="this.userService.login==false" (click)="redict()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Identifícate
+  </button>
+  <button *ngIf="this.userService.login==true" (click)="redict2()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Mi cuenta{{this.userService.ActUser.email}}
+  </button>
+  <button *ngIf="this.userService.login==true" (click)="redict3()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Desconectarse
+  </button>
+</div>
+<ion-content [fullscreen]="true" class="ion-padding" (click)="this.inicReg()">
+  <div *ngIf="us==true">
+    <div (click)="rOpenModal()">
+      <div style="text-align: center;">
+        <ion-item>
+        <ion-label><ion-icon name="filter"></ion-icon>  Filtros</ion-label>
+        <ion-toggle (ionChange)="this.showF()" color="tertiary"></ion-toggle>
+        </ion-item>
+      </div>
+      <div *ngIf="this.l==1">
+        <ion-slides pager="false" [options]="slideOptsTwo" #slideWithNav3
+          (ionSlideDidChange)="SlideDidChange(sliderTwo,slideWithNav2)">
+          <ion-slide style="margin-left: 10%;" *ngFor="let h of this.sliderTwo.slidesItems">
+            <ion-button *ngIf="this.pt==h.genero" color="primary" shape="round" style="color:white"
+              (click)="btnAct(h.genero)">{{h.genero}}</ion-button>
+            <ion-button *ngIf="this.pt!=h.genero" color="white" shape="round" style="color:black"
+              (click)="btnAct(h.genero)">{{h.genero}}</ion-button>
+          </ion-slide>
+        </ion-slides>
+      </div>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="1">
+            <span class="slider-nav arrow-prev" (click)="slidePrev(sliderOne,slideWithNav)">
+              <div class="prev-icon-custom custon-nav" [class.disabled]="sliderOne.isBeginningSlide"></div>
+            </span>
+          </ion-col>
+          <ion-col size="10">
+            <div *ngIf="this.pt==0" style="align-content: center;">
+              <ion-slides pager="false" [options]="slideOptions" #slideWithNav
+                (ionSlideDidChange)="SlideDidChange(sliderOne,slideWithNav)">
+                <ion-slide *ngFor="let g of this.sliderOne.slidesItems">
+                  <div>
+                    <img src="assets/img/{{g.imagen}}.jpg">
+                    <div style="vertical-align: bottom;">
+                      <h3><strong style="font-family: Verdana, Geneva, Tahoma, sans-serif; ">{{g.libro}}</strong></h3>
+                      <h6 style="margin-top: -12px; size: 1px;">{{g.autor}}</h6>
+                      <ion-button color="warning" shape="round" (click)="btnCom(g._id)" size="small">Agregar al carro |
+                        <ion-icon name="cart-outline"></ion-icon>
+                      </ion-button>
+                    </div>
+                    <button *ngIf="this.ms==0" (click)="btnShow()"
+                      style="background-color: transparent; width: 80vw; font-size: 30px;">
+                      <ion-icon name="caret-down-circle-outline"></ion-icon>
+                    </button>
+                    <button *ngIf="this.ms==1" (click)="btnShow()"
+                      style="background-color: transparent; width: 80vw; font-size: 30px;">
+                      <ion-icon name="caret-up-circle-outline"></ion-icon>
+                    </button>
+                    <div *ngIf="this.ms==1" style="text-align: justify;">
+                      <p><strong>No. de páginas:</strong><br>
+                        {{g.paginas}}</p>
+                      <p><strong>genero:</strong><br>
+                        {{g.genero}} </p>
+                      <p><strong>sinopsis:</strong><br>
+                        {{g.sinopsis}}</p>
+                        <p><strong>precio:</strong><br>
+                          ${{g.precio}} mx</p>
+                    </div>
+                  </div>
+                </ion-slide>
+              </ion-slides>
+            </div>
+            <div *ngIf="this.pt!=0" style="align-content: center;">
+              <ion-slides pager="false" [options]="slideOptions" #slideWithNav
+                (ionSlideDidChange)="SlideDidChange(sliderOne,slideWithNav)">
+                <ion-slide *ngFor="let g of this.sliderOne.slidesItems">
+                  <div>
+                    <img src="assets/img/{{g.imagen}}.jfif">
+                    <div style="vertical-align: bottom;">
+                      <h3><strong style="font-family: Verdana, Geneva, Tahoma, sans-serif; ">{{g.libro}}</strong></h3>
+                      <h6 style="margin-top: -12px; size: 1px;">{{g.autor}}</h6>
+                      <ion-button color="warning" shape="round" (click)="btnCom(g._id)" size="small">Agregar al carro |
+                        <ion-icon name="cart-outline"></ion-icon>
+                      </ion-button>
+                    </div>
+                    <button *ngIf="this.ms==0" (click)="btnShow()"
+                      style="background-color: transparent; width: 80vw; font-size: 30px;">
+                      <ion-icon name="caret-down-circle-outline"></ion-icon>
+                    </button>
+                    <button *ngIf="this.ms==1" (click)="btnShow()"
+                      style="background-color: transparent; width: 80vw; font-size: 30px;">
+                      <ion-icon name="caret-up-circle-outline"></ion-icon>
+                    </button>
+                    <div *ngIf="this.ms==1" style="text-align: justify;">
+                      <p><strong>No. de páginas:</strong><br>
+                        {{g.paginas}}</p>
+                      <p><strong>genero:</strong><br>
+                        {{g.genero}} </p>
+                      <p><strong>sinopsis:</strong><br>
+                        {{g.sinopsis}}</p>
+                    </div>
+                  </div>
+                </ion-slide>
+              </ion-slides>
+            </div>
+          </ion-col>
+          <ion-col size="1">
+            <span class="slider-nav arrow-next" (click)="slideNext(sliderOne,slideWithNav)">
+              <div class="next-icon-custom custon-nav" [class.disabled]="sliderOne.isEndSlide"></div>
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+  <!--termina usuario comun humano normal -->
+  <!--comienza usuario admin agregacion de libros-->
+  <div *ngIf="us==false">
+  </div>
+</ion-content>

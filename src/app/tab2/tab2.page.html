@@ -1,0 +1,102 @@
+<ion-header [translucent]="true" (click)="this.inicReg()">
+  <ion-toolbar>
+    <ion-title style="height: 70px;">
+      <img src="../../assets/img/cosas.jpeg"
+        style="margin-left: 10%; width: 30%; height: 80px ; vertical-align: middle;">
+      <button *ngIf="this.userService.login==false" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">Bienvenido</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+      <button *ngIf="this.userService.login==true" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">{{this.userService.ActUser.name}}</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<div *ngIf="this.s==1" style="margin-top: 5px;">
+  <button *ngIf="this.userService.login==false" (click)="redict()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+      font-size: 20px; justify-content: flex-end;">
+        Identifícate
+      </button>
+      <button *ngIf="this.userService.login==true" (click)="redict2()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+      font-size: 20px; justify-content: flex-end;">
+        Mi cuenta
+      </button>
+</div>
+<ion-content style="padding: 20px;" (click)="rOpenModal()">
+  <div style="padding-left: 20%;padding-top: 20px;">
+  <ion-item style="border-radius: 40px; width: 70%; border:solid; border-color:rgb(122, 42, 42);">
+    <ion-label position="floating"> Buscar</ion-label>
+  <ion-input name="buscar" style="text-transform: lowercase;" [(ngModel)]="buscar" (keyup.enter)="busca()"></ion-input>
+  <ion-icon slot="end" name="search-outline"></ion-icon>
+</ion-item>
+</div>
+
+<!--comienza admin-->
+  <ion-card *ngIf="userService.tipoUser=='admin'">
+  <form #librosform="ngForm" >
+    <ion-item>
+    <ion-label position="floating">Titulo del libro</ion-label>
+    <ion-input name="libro" #libro="ngModel" [(ngModel)]="dato.selectLibro.libro"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Autor</ion-label>
+    <ion-input name="autor" #autor="ngModel" [(ngModel)]="dato.selectLibro.autor"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Paginas</ion-label>
+    <ion-input type="number" name="paginas" #paginas="ngModel" [(ngModel)]="dato.selectLibro.paginas"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Sinopsis</ion-label>
+    <ion-input name="sinopsis" #sinopsis="ngModel" [(ngModel)]="dato.selectLibro.sinopsis"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">genero</ion-label>
+    <ion-input name="genero" #genero="ngModel" [(ngModel)]="dato.selectLibro.genero"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Existencias</ion-label>
+    <ion-input type="number" name="stok" #stok="ngModel" [(ngModel)]="dato.selectLibro.stok"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Precio</ion-label>
+    <ion-input type="number" name="precio" #precio="ngModel" [(ngModel)]="dato.selectLibro.precio"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Imagen</ion-label>
+    <ion-input name="imagen" #imagen="ngModel" [(ngModel)]="dato.selectLibro.imagen"></ion-input>
+  </ion-item>
+  <ion-button (click)="addlibro(librosform)">Guardar</ion-button>
+  <ion-button (click)="resetForm(librosform)">Limpiar</ion-button>
+  </form>
+  <!--termina admin-->
+  <!--usuario comun humano-->
+</ion-card>
+<div *ngFor="let book of this.busqueda">
+<ion-card style="margin-left: 10%; margin-right: 10%;">
+  <ion-card-header>
+    <img src="assets/img/{{book.imagen}}.jpg" style="width: 450px; height: 500px;">
+  </ion-card-header>
+  <ion-card-content>
+    <p>Autor: {{book.autor}}</p>
+    <p>Paginas: {{book.paginas}}</p>
+    <p>Genero: {{book.genero}}</p>
+    <div *ngIf="opt==true">
+    <p>Sinopsis: {{book.sinopsis}}</p>
+    <p>Existencias: {{book.stok}}</p>
+    <p>Precio: ${{book.precio}}mx </p>
+  </div>
+  <ion-button color="tertiary"(click)="toggleinfo()" ><div *ngIf="opt==false"> <ion-icon name="add-circle-outline"></ion-icon>Mas informacion</div><div *ngIf="opt==true"><ion-icon name="remove-circle-outline"></ion-icon> Menos informacion</div> </ion-button>
+  <ion-button color="warning" (click)="btnCom(book._id)">Agregar al carro | <ion-icon name="cart-outline"></ion-icon></ion-button>
+</ion-card-content>
+</ion-card>
+</div>
+<!--acaba humano -->
+</ion-content>
+ 

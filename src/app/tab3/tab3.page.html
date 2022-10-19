@@ -1,0 +1,73 @@
+<ion-header [translucent]="true" (click)="this.inicReg()">
+  <ion-toolbar>
+    <ion-title style="height: 70px;">
+      <img src="../../assets/img/cosas.jpeg"
+        style="margin-left: 10%; width: 30%; height: 80px ; vertical-align: middle;">
+      <button *ngIf="this.userService.login==false" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">Bienvenido</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+      <button *ngIf="this.userService.login==true" ion-button (click)="openModal()"
+        style="margin-left: 20%; text-align: center; width: 40%; background-color: transparent; vertical-align: middle;">
+        <strong slot="center" style="vertical-align: middle;">{{this.userService.ActUser.name}}</strong>
+        <img slot="end" style="margin-left: 20%; border-radius: 50%; width: 50px; height: 50px; vertical-align: middle;"
+          src="assets/img/pimg.png">
+      </button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<div *ngIf="s==1" style="margin-top: 5px;">
+  <button *ngIf="this.userService.login==false" (click)="redict()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Identifícate
+  </button>
+  <button *ngIf="this.userService.login==true" (click)="redict2()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Mi cuenta{{this.userService.ActUser.email}}
+  </button>
+  <button *ngIf="this.userService.login==true" (click)="redict3()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
+  font-size: 20px; justify-content: flex-end;">
+    Desconectarse
+  </button>
+</div>
+<ion-content style="padding: 20px;" (click)="rOpenModal()">
+  <div *ngIf="this.userService.tipoUser!='admin'">
+  <div *ngFor="let book of this.userService.ActUser.compras let indice=index">
+    <ion-card style="margin-right: 10%; margin-left: 10%;">
+      <ion-card-header>
+        <img src="assets/img/{{book.imagen}}.jpg" style="width: 450px; height: 500px;">
+      </ion-card-header>
+      <ion-card-content>
+        <p> {{indice+1}} </p>
+        <p>Autor: {{book.autor}}</p>
+        <p>Paginas: {{book.paginas}}</p>
+        <p>Genero: {{book.genero}}</p>
+        <p>Precio: {{book.precio}} </p>
+      <ion-button color="danger"(click)="delete(indice)" ><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-card-content>
+    </ion-card>
+    </div>
+    <div *ngIf="this.userService.login==true">
+      <p>Precio Total: {{total}} </p>
+      <ion-button (click)="pagarTotal()">Actualizar total</ion-button>
+    <ion-button color="success"(click)="presentConfirm()">Comprar todo</ion-button>
+  </div>
+</div>
+<!--admin comienza-->
+<div *ngIf="this.userService.tipoUser=='admin'">
+<div *ngFor="let compras of this.compras">
+  <ion-card>
+  <ion-card-content>
+    <p>Usuario: {{compras.cliente}} </p>
+    <p>Articulos: {{compras.articulos}}</p>
+    <p>Monto: {{compras.momnto}} </p>
+    </ion-card-content>
+    
+  </ion-card>
+  
+</div>
+<ion-button (click)="obtencompras()">ver compras</ion-button>
+</div>
+</ion-content>

@@ -1,0 +1,62 @@
+<ion-header>
+</ion-header>
+<ion-content style="padding: 20px;">
+
+  <img style="width: 100%;" src="assets/img/cosa.jpeg" />
+
+  <ion-card>
+    <ion-segment (ionChange)="toggleopt()" color="tertiary">
+      <ion-segment-button value="true">Logear</ion-segment-button>
+      <ion-segment-button value="false">Registrarse</ion-segment-button>
+    </ion-segment>
+    <form #usuarioform="ngForm">
+      <ion-item *ngIf="!opt">
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input name="name" #name="ngModel" [(ngModel)]="tbUser" (keyup)="Rname($event)"></ion-input>
+        <span>{{tbUser}}</span>
+      </ion-item>
+      <span style="color:red">{{usertbinfo}}</span>
+      <ion-input name="role" #role="ngModel" type="hidden" value="humano" [(ngModel)]="userService.selecteduser.role">
+      </ion-input>
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input name="email" #email="ngModel" [(ngModel)]="tbEmail" (keyup)="Remail($event)"></ion-input>
+      </ion-item>
+      <span style="color:red">{{emailbtinfo}}</span>
+      <ion-item *ngIf="!opt">
+        <ion-label position="floating">Direccion</ion-label>
+        <ion-input name="direccion" #direccion="ngModel" [(ngModel)]="tbDir" (keyup)="Rdir($event)"></ion-input>
+      </ion-item>
+      <span style="color:red">{{dirtbinfo}}</span>
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" name="password" #password="ngModel" [(ngModel)]="tbPass" (keyup)="Rpass($event)">
+        </ion-input>
+      </ion-item>
+      <ion-item *ngIf="!opt">
+        <ion-label position="floating">Confirmar contraseña</ion-label>
+        <ion-input type="password" name="password2" #password="ngModel" [(ngModel)]="tbPass2"></ion-input>
+      </ion-item>
+        <span style="color:red">{{pass2tbinfo}}</span>
+        <ion-button color="tertiary" *ngIf="!opt" expand="block" (click)="singIn()">Registrarse
+        </ion-button>
+      <ion-button color="tertiary" *ngIf="opt" expand="block" (click)="singIn()">Iniciar Sesion
+      </ion-button>
+      <ion-button color="warning" *ngIf="!opt" expand="block" (click)="resetForm(usuarioform)">Cancelar</ion-button>
+    </form>
+    <ion-item-divider color="white"></ion-item-divider>
+
+
+  </ion-card>
+  <p style="text-align: center;"> OR</p>
+  <div class="container" style="display: flex;padding: 50px;">
+    <a href="#" style="width: 33%;"><img src="assets/img/facebook.png" style="height: 70px;"></a>
+    <a href="#" style="width: 33%;"><img src="assets/img/twitter.png" style="height: 70px;"></a>
+    <a href="#" style="width: 33%;"><img src="assets/img/you.png" style="height: 70px;"></a>
+  </div>
+  <div class="container" style="display: flex; padding: 50px;">
+    <a href="#" style="width: 33%;"><img src="assets/img/instagram.png" style="height: 70px;"></a>
+    <a href="#" style="width: 33%;"><img src="assets/img/snap.png" style="height: 70px;"></a>
+    <a href="#" style="width: 33%;"><img src="assets/img/whats.png" style="height: 70px;"></a>
+  </div>
+</ion-content>
