@@ -26,15 +26,16 @@
   </button>
   <button *ngIf="this.userService.login==true" (click)="redict2()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
   font-size: 20px; justify-content: flex-end;">
-    Mi cuenta{{this.userService.ActUser.email}}
+    Mi cuenta - {{this.userService.ActUser.email}}
   </button>
   <button *ngIf="this.userService.login==true" (click)="redict3()" style="width: 100%; text-align: end;  border-bottom: black 2px solid; background-color: transparent;
   font-size: 20px; justify-content: flex-end;">
     Desconectarse
   </button>
 </div>
+<span>{{this.userService.ActUser.role}}</span>
 <ion-content [fullscreen]="true" class="ion-padding" (click)="this.inicReg()">
-  <div *ngIf="us==true">
+  <div *ngIf="this.userService.admin == false">
     <div (click)="rOpenModal()">
       <div style="text-align: center;">
         <ion-item>
@@ -142,6 +143,6 @@
   </div>
   <!--termina usuario comun humano normal -->
   <!--comienza usuario admin agregacion de libros-->
-  <div *ngIf="us==false">
+  <div *ngIf="this.userService.admin==true">
   </div>
 </ion-content>

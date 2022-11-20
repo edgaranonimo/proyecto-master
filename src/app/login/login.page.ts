@@ -23,12 +23,15 @@ export class LoginPage implements OnInit {
   passtbinfo: string;
   tbPass2: string;
   pass2tbinfo: string;
-  key: '8jf0¡7wsjf09rfj@odfdjlk-d03ue?dfs'
+  key: string;
   crypt: CryptoJS;
   usuario: Users;
   password: string;
   password2: string;
   opt: boolean;
+  uemail: Users;
+  checkmail: any;
+  repeatemail = true;
   bandera = false;
   showPassword = false;
   passtogle = 'eye';
@@ -42,12 +45,14 @@ export class LoginPage implements OnInit {
     public router: Router, public userService: UsuarioService) {
     this.opt = true;
     this.usuario = new Users();
+    this.uemail = new Users();
     this.s = 0;
+    this.key = '8jf0¡7wsjf09rfj@odfdjlk-d03ue?dfs';
   }
 
   toggleopt() {
     this.opt = !this.opt;
-    console.log(this.opt);
+    this.Remail("s");
   }
 
   toglepass(): void {
@@ -57,56 +62,69 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.userService.ObtenerUsers();
   }
-  //pendiente
-  /*iniciarSesion(form: NgForm) {
-    this.validar(form);
-    if (this.userService.login) {
-      this.userService.tipoUser = this.userService.ActUser.role;
-      if (this.userService.ActUser.role == 'admin') {
-        this.userService.admin = true;
+
+  login(form: NgForm) {
+    if (this.uemail.email!='none' && this.tbEmail != '') {
+      if (this.tbEmail==this.uemail[0].email) {
+        if (this.tbPass == CryptoJS.AES.decrypt(this.uemail[0].password.trim(), this.key.trim()).toString(CryptoJS.enc.Utf8)) {
+        this.userService.ActUser = this.uemail[0];
+        if(this.userService.ActUser.role == "admin"){
+          this.userService.admin=true;
+        }
+        this.userService.login = true;
+        this.resetForm(form);
+        this.noregAlert();
+        this.router.navigate(['/tabs/tab1']);
+        }else{
+          this.passtbinfo = "Contraseña incorrecta";
+        }
       }
-      this.noregAlert();
-      this.resetForm(form);
-      this.router.navigate(['/tabs/tab1']);
-    } else {
-      this.noAlert();
+    }else{
+      this.emailtbinfo = "No existe el correo electrónico"
     }
   }
+
   revisar() {
     if (this.password2 == this.userService.selecteduser.password) {
       this.bandera = true;
     } else this.bandera = false;
     this.eq = true;
-  }*/
+  }
 
-  async singIn() {
+  registro(form: NgForm) {
     let r;
-    let email;
-    email = this.repeatedemail();
-    console.log(email);
-    if (email.lenght>=1) {
-      if (this.finalvaliduser() && this.finalvalidemail && this.finalvaliddir && this.finalvalidpass && this.pass2tbinfo=='' && this.tbPass2!='') {
+    if (this.uemail.email == "none") {
+      this.repeatemail = false;
+    }else{
+      this.repeatemail = true
+    }
+    if (!this.repeatemail) {
+      if (this.finalvaliduser() && this.finalvalidemail() && this.finalvaliddir() && this.finalvalidpass() && this.pass2tbinfo == '' && this.tbPass2 != '') {
         this.usuario.name = this.tbUser;
         this.usuario.email = this.tbEmail;
         this.usuario.direccion = this.tbDir;
-        this.usuario.password = CryptoJS.AES.encrypt(this.tbPass, this.key).toString();
-        this.usuario.role='humano';
-        this.usuario.compras= [];
-        (await this.userService.posEmpleados(this.usuario)).subscribe(res => {
-          r=res;
-          console.log(res);
+        this.usuario.password = CryptoJS.AES.encrypt(this.tbPass.trim(), this.key.trim()).toString(); 
+        this.usuario.role = 'humano';
+        this.usuario.compras = [];
+        this.userService.posEmpleados(this.usuario).subscribe(res => {
+          r = res;
+          this.userService.login = true;
+          this.userService.ActUser = this.usuario;
+          this.resetForm(form);
+          this.presentAlert();
+          this.router.navigate(['/tabs/tab1']);
         })
       }
-    }else{
-      this.emailtbinfo='Este correo electrónico ya ha sido registrado';
+    } else {
+      this.emailtbinfo = 'Este correo electrónico ya ha sido registrado';
     }
   }
 
-  Rpass2(key){
-    if (key.targe.value!=this.tbPass) {
-      this.pass2tbinfo='Las contraseñas no coinciden'
-    }else{
-      this.pass2tbinfo=''
+  Rpass2(key) {
+    if (this.tbPass2 != this.tbPass) {
+      this.pass2tbinfo = 'Las contraseñas no coinciden'
+    } else {
+      this.pass2tbinfo = ''
     }
   }
 
@@ -150,20 +168,17 @@ export class LoginPage implements OnInit {
     let E1 = 0;
     let E2 = 0;
     for (let i = 0; i < this.tbUser.length; i++) {
-      if (this.tbUser.substring(i) == " ") {
+      if (this.tbUser.substring(i,i+1)==" ") {
         E1++;
       }
-      if (this.tbUser.substring(i) != " ") {
-        E2++;
-      }
-      if (this.tbUser.substring(i) == '(' || this.tbUser.substring(i) == ')' || this.tbUser.substring(i) == '"'
-        || this.tbUser.substring(i) == "'" || this.tbUser.substring(i) == "=" || this.tbUser.substring(i) == "+"
-        || this.tbUser.substring(i) == "{" || this.tbUser.substring(i) == "}" || this.tbUser.substring(i) == "["
-        || this.tbUser.substring(i) == "]" || this.tbUser.substring(i) == "/" || this.tbUser.substring(i) == "|") {
+      if (this.tbUser.substring(i,i+1) == '(' || this.tbUser.substring(i,i+1) == ')' || this.tbUser.substring(i,i+1) == '"'
+        || this.tbUser.substring(i,i+1) == "'" || this.tbUser.substring(i,i+1) == "=" || this.tbUser.substring(i,i+1) == "+"
+        || this.tbUser.substring(i,i+1) == "{" || this.tbUser.substring(i,i+1) == "}" || this.tbUser.substring(i,i+1) == "["
+        || this.tbUser.substring(i,i+1) == "]" || this.tbUser.substring(i,i+1) == "/" || this.tbUser.substring(i,i+1) == "|") {
         return 2
       }
     }
-    if (E1 < 2 && E2 < 5) {
+    if (E1 > 1 && this.tbUser.length > E1) {
       return 1
     } else {
       return 0
@@ -190,45 +205,36 @@ export class LoginPage implements OnInit {
     }
   }
 
-  async repeatedemail(){
-    let r;
-    let s;
-    (await this.userService.obtEmpleadoEmail(this.tbEmail))
+  repeatedemail() {
+    var str: string | undefined;
+    this.userService.obtEmpleadoEmail(this.tbEmail)
       .subscribe(res => {
-        return res;
-        console.log(res);
+        this.uemail = res as Users;
+        this.checkmail = res;
+        if (this.uemail.email == "none") {
+          this.repeatemail = false;
+        }else{
+          this.repeatemail = true
+        }
       });
-    /*async function loademail(){
-      try{
-        this.userService.obtEmpleadoEmail(this.tbEmail)
-      .subscribe(res => {
-        r=res as Users;
-        console.log(res);
-      })
-      }
-      catch(err){
-        console.log(err);
-      }
-    }
-    loademail();*/
-    return r;
+      console.log(this.repeatemail);
   }
 
   validemailtb() {
     let E1 = false;
     let E2 = false;
     for (let i = 0; i < this.tbEmail.length; i++) {
-      if (this.tbEmail.substring(i) == "@") {
+      if (this.tbEmail.substring(i,i+1) == "@") {
         E1 = true
       }
-      if (this.tbEmail.substring(i) != ".") {
+      if (this.tbEmail.substring(i,i+1) == ".") {
         E2 = true;
       }
-      if (this.tbEmail.substring(i) == '(' || this.tbEmail.substring(i) == ')' || this.tbEmail.substring(i) == '"'
-        || this.tbEmail.substring(i) == "'" || this.tbEmail.substring(i) == "=" || this.tbEmail.substring(i) == "+"
-        || this.tbEmail.substring(i) == "{" || this.tbEmail.substring(i) == "}" || this.tbEmail.substring(i) == "["
-        || this.tbEmail.substring(i) == "]" || this.tbEmail.substring(i) == "/" || this.tbEmail.substring(i) == "|"
-        || this.tbEmail.substring(i) == " ") {
+      if (this.tbEmail.substring(i,i+1) == '(' || this.tbEmail.substring(i,i+1) == ')' || this.tbEmail.substring(i,i+1) == '"'
+        || this.tbEmail.substring(i,i+1) == "'" || this.tbEmail.substring(i,i+1) == "=" || this.tbEmail.substring(i,i+1) == "+"
+        || this.tbEmail.substring(i,i+1) == "{" || this.tbEmail.substring(i,i+1) == "}" || this.tbEmail.substring(i,i+1) == "["
+        || this.tbEmail.substring(i,i+1) == "]" || this.tbEmail.substring(i,i+1) == "/" || this.tbEmail.substring(i,i+1) == "|"
+        || this.tbEmail.substring(i,i+1)== " ") {
         return 2
       }
     }
@@ -264,26 +270,26 @@ export class LoginPage implements OnInit {
     let E2 = 0;
     let E3 = false;
     for (let i = 0; i < this.tbDir.length; i++) {
-      if (this.tbDir.substring(i) == ",") {
+      if (this.tbDir.substring(i,i+1) == ",") {
         E1++;
       }
-      if (this.tbDir.substring(i) != " ") {
+      if (this.tbDir.substring(i,i+1) != " ") {
         E2++;
       }
-      if (this.tbDir.substring(i) == '(' || this.tbDir.substring(i) == ')' || this.tbDir.substring(i) == '"'
-        || this.tbDir.substring(i) == "'" || this.tbDir.substring(i) == "=" || this.tbDir.substring(i) == "+"
-        || this.tbDir.substring(i) == "{" || this.tbDir.substring(i) == "}" || this.tbDir.substring(i) == "["
-        || this.tbDir.substring(i) == "]" || this.tbDir.substring(i) == "|") {
+      if (this.tbDir.substring(i,i+1) == '(' || this.tbDir.substring(i,i+1) == ')' || this.tbDir.substring(i,i+1) == '"'
+        || this.tbDir.substring(i,i+1) == "'" || this.tbDir.substring(i,i+1) == "=" || this.tbDir.substring(i,i+1) == "+"
+        || this.tbDir.substring(i,i+1) == "{" || this.tbDir.substring(i,i+1) == "}" || this.tbDir.substring(i,i+1) == "["
+        || this.tbDir.substring(i,i+1) == "]" || this.tbDir.substring(i,i+1) == "|") {
         return 2
       }
-      if (this.tbDir.substring(i) == '1' || this.tbDir.substring(i) == '2' || this.tbDir.substring(i) == '3'
-        || this.tbDir.substring(i) == "4" || this.tbDir.substring(i) == "5" || this.tbDir.substring(i) == "6"
-        || this.tbDir.substring(i) == "7" || this.tbDir.substring(i) == "8" || this.tbDir.substring(i) == "9"
-        || this.tbDir.substring(i) == "0") {
+      if (this.tbDir.substring(i,i+1) == '1' || this.tbDir.substring(i,i+1) == '2' || this.tbDir.substring(i,i+1) == '3'
+        || this.tbDir.substring(i,i+1) == "4" || this.tbDir.substring(i,i+1) == "5" || this.tbDir.substring(i,i+1) == "6"
+        || this.tbDir.substring(i,i+1) == "7" || this.tbDir.substring(i,i+1) == "8" || this.tbDir.substring(i,i+1) == "9"
+        || this.tbDir.substring(i,i+1) == "0") {
         E3 = true;
       }
     }
-    if (E1 == 3 && E2 < 5 && E3==true) {
+    if (E1 == 3 && E2 > 5 && E3 == true) {
       return 1
     } else {
       return 0
@@ -312,17 +318,17 @@ export class LoginPage implements OnInit {
 
   validpasstb() {
     for (let i = 0; i < this.tbPass.length; i++) {
-      if (this.tbPass.substring(i) == '(' || this.tbPass.substring(i) == ')' || this.tbPass.substring(i) == '"'
-        || this.tbPass.substring(i) == "'" || this.tbPass.substring(i) == "=" || this.tbPass.substring(i) == "+"
-        || this.tbPass.substring(i) == "{" || this.tbPass.substring(i) == "}" || this.tbPass.substring(i) == "["
-        || this.tbPass.substring(i) == "]" || this.tbPass.substring(i) == "/" || this.tbPass.substring(i) == "|"
-        || this.tbPass.substring(i) == " " || this.tbPass.substring(i) == "." || this.tbPass.substring(i) == "-"
-        || this.tbPass.substring(i) == "_" || this.tbPass.substring(i) == ":" || this.tbPass.substring(i) == ";"
-        || this.tbPass.substring(i) == ",") {
+      if (this.tbPass.substring(i,i+1) == '(' || this.tbPass.substring(i,i+1) == ')' || this.tbPass.substring(i,i+1) == '"'
+        || this.tbPass.substring(i,i+1) == "'" || this.tbPass.substring(i,i+1) == "=" || this.tbPass.substring(i,i+1) == "+"
+        || this.tbPass.substring(i,i+1) == "{" || this.tbPass.substring(i,i+1) == "}" || this.tbPass.substring(i,i+1) == "["
+        || this.tbPass.substring(i,i+1) == "]" || this.tbPass.substring(i,i+1) == "/" || this.tbPass.substring(i,i+1) == "|"
+        || this.tbPass.substring(i,i+1) == " " || this.tbPass.substring(i,i+1) == "." || this.tbPass.substring(i,i+1) == "-"
+        || this.tbPass.substring(i,i+1) == "_" || this.tbPass.substring(i,i+1) == ":" || this.tbPass.substring(i,i+1) == ";"
+        || this.tbPass.substring(i,i+1) == ",") {
         return 2
       }
     }
-    if (this.tbPass.length>7 && this.tbPass.length<21) {
+    if (this.tbPass.length > 7 && this.tbPass.length < 21) {
       return 1
     } else {
       return 0

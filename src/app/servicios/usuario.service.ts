@@ -31,7 +31,7 @@ export class UsuarioService {
     this.tokenbd = new tokens();
   }
 
-  async obtenerEmpleados() {
+  obtenerEmpleados() {
     try{
       return this.httpClient.get(this.urlPeticionNode + this.tokenbd.tokenBd)
     }
@@ -40,7 +40,7 @@ export class UsuarioService {
     }
   }
 
-  async posEmpleados(user: Users) {
+  posEmpleados(user: Users) {
     try{
       return this.httpClient.post(this.urlPeticionNode + this.tokenbd.tokenBd, user)
     }
@@ -49,45 +49,45 @@ export class UsuarioService {
     }
   }
 
-  async actEmpleado(user: Users) {
+  actEmpleado(user: Users) {
     try{
-      return this.httpClient.put(this.urlPeticionNode + user._id, user + this.tokenbd.tokenBd)
+      return this.httpClient.put(this.urlPeticionNode + user._id + "&" + this.tokenbd.tokenBd, user)
     }
     catch(err){
       console.log(err);
     }
   }
 
-  async deleteEmpleado(_id: string) {
+  deleteEmpleado(_id: string) {
     try{
       this.frr = _id;
-    return this.httpClient.delete(this.urlPeticionNode + _id + this.tokenbd.tokenBd);
+    return this.httpClient.delete(this.urlPeticionNode + _id + "&" + this.tokenbd.tokenBd);
     }
     catch(err){
       console.log(err);
     }
   }
   
-  async obtEmpleadoid(_id: string){
+  obtEmpleadoid(_id: string){
     try{
-      return this.httpClient.get(this.urlPeticionNode + _id + this.tokenbd.tokenBd);
+      return this.httpClient.get(this.urlPeticionNode + _id + "&" + this.tokenbd.tokenBd);
     }
     catch(err){
       console.log(err);
     }
   }
 
-  async obtEmpleadoEmail(email: string){
+  obtEmpleadoEmail(email: string){
     try{
-      return this.httpClient.get(this.urlPeticionNode + email + this.tokenbd.tokenBd);
+      return this.httpClient.get(this.urlPeticionNode + email + "&" + this.tokenbd.tokenBd);
     }
     catch(err){
       console.log(err);
     }
   }
 
-  async ObtenerUsers(){
-    (await this.obtenerEmpleados())
+  ObtenerUsers(){
+    this.obtenerEmpleados()
       .subscribe(res => {
         this.empleados = res as Users[];
         console.log(res);

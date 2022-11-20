@@ -20,9 +20,9 @@
       </ion-input>
       <ion-item>
         <ion-label position="floating">Email</ion-label>
-        <ion-input name="email" #email="ngModel" [(ngModel)]="tbEmail" (keyup)="Remail($event)"></ion-input>
+        <ion-input name="email" #email="ngModel" [(ngModel)]="tbEmail" (keyup)="Remail($event)" (focusout)="repeatedemail()"></ion-input>
       </ion-item>
-      <span style="color:red">{{emailbtinfo}}</span>
+      <span style="color:red">{{emailtbinfo}}</span>
       <ion-item *ngIf="!opt">
         <ion-label position="floating">Direccion</ion-label>
         <ion-input name="direccion" #direccion="ngModel" [(ngModel)]="tbDir" (keyup)="Rdir($event)"></ion-input>
@@ -33,14 +33,15 @@
         <ion-input type="password" name="password" #password="ngModel" [(ngModel)]="tbPass" (keyup)="Rpass($event)">
         </ion-input>
       </ion-item>
+      <span style="color:red">{{passtbinfo}}</span>
       <ion-item *ngIf="!opt">
         <ion-label position="floating">Confirmar contraseña</ion-label>
-        <ion-input type="password" name="password2" #password="ngModel" [(ngModel)]="tbPass2"></ion-input>
+        <ion-input type="password" name="password2" #password="ngModel" [(ngModel)]="tbPass2" (keyup)="Rpass2($event)"></ion-input>
       </ion-item>
         <span style="color:red">{{pass2tbinfo}}</span>
-        <ion-button color="tertiary" *ngIf="!opt" expand="block" (click)="singIn()">Registrarse
+        <ion-button color="tertiary" *ngIf="!opt" expand="block" (click)="registro(usuarioform)">Registrarse
         </ion-button>
-      <ion-button color="tertiary" *ngIf="opt" expand="block" (click)="singIn()">Iniciar Sesion
+      <ion-button color="tertiary" *ngIf="opt" expand="block" (click)="login(usuarioform)">Iniciar Sesion
       </ion-button>
       <ion-button color="warning" *ngIf="!opt" expand="block" (click)="resetForm(usuarioform)">Cancelar</ion-button>
     </form>

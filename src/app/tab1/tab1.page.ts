@@ -157,6 +157,7 @@ export class Tab1Page implements OnInit{
   redict3(){
     if(this.userService.login){
       this.userService.login=false;
+      this.userService.admin=false;
       this.userService.ActUser=new Users();
     }
   }
