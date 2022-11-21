@@ -20,7 +20,7 @@
       </ion-input>
       <ion-item>
         <ion-label position="floating">Email</ion-label>
-        <ion-input name="email" #email="ngModel" [(ngModel)]="tbEmail" (keyup)="Remail($event)" (focusout)="repeatedemail()"></ion-input>
+        <ion-input name="email" autofocus #email="ngModel" [(ngModel)]="tbEmail" (keyup)="Remail($event)" (focusout)="repeatedemail()"></ion-input>
       </ion-item>
       <span style="color:red">{{emailtbinfo}}</span>
       <ion-item *ngIf="!opt">

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm, NgModel } from '@angular/forms';
 import { IonSlides } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -16,14 +17,15 @@ import { Users } from '../modelos/users';
 
 
 
-export class Tab1Page implements OnInit{
-//edgar 
+export class Tab1Page implements OnInit {
+  //edgar 
   @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
   @ViewChild('slideWithNav2', { static: false }) slideWithNav2: IonSlides;
 
   sliderOne: any;
   sliderTwo: any;
   libros: Libros[];
+  libroToAdd: Libros;
   userCar = new Users();
   s: number;
   l: number;
@@ -31,8 +33,10 @@ export class Tab1Page implements OnInit{
   pt: string;
   gn: number;
   gn2: number;
+  genero: Array<string>;
+  selectedGenero: string;
 
-  public us:boolean;
+  public us: boolean;
 
   slideOptions = {
     on: {
@@ -128,10 +132,10 @@ export class Tab1Page implements OnInit{
     centeredSlides: false,
     spaceBetween: 20
   };
-//termina slide funciones
+  //termina slide funciones
 
-  constructor(public router: Router, public userService:UsuarioService,public dato:DatosService, public alertController:AlertController) {
-    this.us=true;
+  constructor(public router: Router, public userService: UsuarioService, public dato: DatosService, public alertController: AlertController) {
+    this.us = true;
     this.gn = this.ObtenerLibros();
     this.gn2 = this.inicReg();
     //Item object for Nature
@@ -145,42 +149,58 @@ export class Tab1Page implements OnInit{
       isEndSlide: false,
       slidesItems: []
     };
-
+    this.libroToAdd = new Libros();
     this.s = 0;
     this.l = 0;
     this.pt = "";
-    this.ms=0;
+    this.ms = 0;
+    this.genero = [
+      "Accion",
+      "Comedia",
+      "Romance",
+      "Terror",
+      "Ciencia",
+      "Educacion",
+      "Ficcion",
+      "Autosuperacion",
+      "Historia",
+      "Cuentos",
+      "Novela",
+      "Religion",
+      "Psicologico"
+    ]
+    this.selectedGenero = "";
   }
 
   //logout
 
-  redict3(){
-    if(this.userService.login){
-      this.userService.login=false;
-      this.userService.admin=false;
-      this.userService.ActUser=new Users();
+  redict3() {
+    if (this.userService.login) {
+      this.userService.login = false;
+      this.userService.admin = false;
+      this.userService.ActUser = new Users();
     }
   }
 
-  ObtenerLibros(){
+  ObtenerLibros() {
     this.dato.ObtenLibros()
-    .subscribe(res=>{
-      this.dato.libros=res as Libros[];
-      this.libros=res as Libros[];
-      this.sliderOne.slidesItems=res as Libros[];
-      console.log(res);
-    })
+      .subscribe(res => {
+        this.dato.libros = res as Libros[];
+        this.libros = res as Libros[];
+        this.sliderOne.slidesItems = res as Libros[];
+        console.log(res);
+      })
     return 18;
   }
 
-  inicReg(){
-    if(this.userService.correo!=''){
+  inicReg() {
+    if (this.userService.correo != '') {
       this.userService.ObtenerUsers();
       this.userService.empleados.forEach(element => {
-        if (this.userService.correo==element.email){
-          this.userService.ActUser=element;
-          this.userService.login=true;
-          this.userService.correo='';
+        if (this.userService.correo == element.email) {
+          this.userService.ActUser = element;
+          this.userService.login = true;
+          this.userService.correo = '';
         }
       });
     }
@@ -191,19 +211,19 @@ export class Tab1Page implements OnInit{
     this.rOpenModal();
   }
 
-  async btnCom(lib){
+  async btnCom(lib) {
     let libCar = new Libros();
     this.libros.forEach(element => {
-      if(element._id==lib){
-        libCar=element;
+      if (element._id == lib) {
+        libCar = element;
       }
     });
-    if(this.userService.login){
+    if (this.userService.login) {
       this.userService.ActUser.compras.push(libCar);
-      (await this.userService.actEmpleado(this.userService.ActUser)).subscribe(res=>{
+      (await this.userService.actEmpleado(this.userService.ActUser)).subscribe(res => {
         this.presentAlert();
       });
-    }else{
+    } else {
       this.LoginAlert();
       /*this.inicReg();
       this.btnCom(lib);*/
@@ -258,76 +278,99 @@ export class Tab1Page implements OnInit{
   redict() {
     this.router.navigate(['/tabs/tab4']);
   }
-  btnShow(){
-    if (this.ms==1){
-      this.ms=0;
-    }else{
-      this.ms=1;
+  btnShow() {
+    if (this.ms == 1) {
+      this.ms = 0;
+    } else {
+      this.ms = 1;
     }
   }
-  getGenArray(){
-    let s="";
-    let j=false;
+  getGenArray() {
+    let s = "";
+    let j = false;
     this.dato.libros.forEach(element => {
-      s=element.genero;
+      s = element.genero;
       this.sliderTwo.slidesItems.forEach(element => {
-        if(element.genero==s){
-          j=true;
+        if (element.genero == s) {
+          j = true;
         }
       });
-      if(j==false){
+      if (j == false) {
         this.sliderTwo.slidesItems.push(element);
       }
-      j=false;
+      j = false;
     });
   }
 
-  getlibroarray(){
-    let r=0;
+  getlibroarray() {
+    let r = 0;
     this.dato.libros.forEach(element => {
       this.sliderOne.slidesItems.push(element);
       r++;
     });
-    if(r==1){
-      this.sliderOne.isEndSlide=true;
+    if (r == 1) {
+      this.sliderOne.isEndSlide = true;
     }
-    if(r>1){
-      this.sliderOne.isEndSlide=false;
+    if (r > 1) {
+      this.sliderOne.isEndSlide = false;
     }
   }
-  
-  showF(){
-    if(this.l==1){
-      this.l=0;
-    }else{
-      this.l=1;
+
+  showF() {
+    if (this.l == 1) {
+      this.l = 0;
+    } else {
+      this.l = 1;
       this.getGenArray()
     }
   }
-  
+
   btnAct(gen) {
-    this.sliderOne.slidesItems=[];
-    let r=0;
-    if(this.pt==gen){
-      this.pt="";
+    this.sliderOne.slidesItems = [];
+    let r = 0;
+    if (this.pt == gen) {
+      this.pt = "";
       this.getlibroarray();
-    }else{
-      this.pt=gen;
+    } else {
+      this.pt = gen;
       this.dato.libros.forEach(element => {
-        if (element.genero==gen){
+        if (element.genero == gen) {
           this.sliderOne.slidesItems.push(element);
           r++;
         }
-    });
-    if(r==1){
-      this.sliderOne.isEndSlide=true;
+      });
+      if (r == 1) {
+        this.sliderOne.isEndSlide = true;
+      }
+      if (r > 1) {
+        this.sliderOne.isEndSlide = false;
+      }
     }
-    if(r>1){
-      this.sliderOne.isEndSlide=false;
-    }
-    }
-    this.sliderOne.isBeginningSlide=true;
+    this.sliderOne.isBeginningSlide = true;
   }
+
+  selectChanged(selectedgen) {
+    this.selectedGenero = selectedgen;
+  };
+
+  addBook(form: NgForm) {
+    this.libroToAdd.genero = this.selectedGenero;
+    if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
+      this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
+      this.EAlert();
+    } else {
+      this.dato.libros.push(this.libroToAdd);
+      this.libros.push(this.libroToAdd);
+      this.sliderOne.slidesItems.push(this.libroToAdd);
+      this.dato.posLibro(this.libroToAdd).subscribe(res => {
+        this.selectedGenero = "";
+        form.reset();
+        this.libroToAdd = new Libros();
+        this.RAlert();
+      })
+    }
+  }
+
   async presentAlert() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -339,6 +382,31 @@ export class Tab1Page implements OnInit{
 
     await alert.present();
   }
+
+  async EAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Error',
+      subHeader: '',
+      message: 'Alguno de los campos está vacío o es 0, verifique los datos',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  async RAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Hecho',
+      subHeader: '',
+      message: 'El libro ha sido añadido a la base de datos correctamente',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
   async LoginAlert() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

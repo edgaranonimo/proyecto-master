@@ -68,7 +68,7 @@
                 (ionSlideDidChange)="SlideDidChange(sliderOne,slideWithNav)">
                 <ion-slide *ngFor="let g of this.sliderOne.slidesItems">
                   <div>
-                    <img src="assets/img/{{g.imagen}}.jpg">
+                    <img src="assets/img/{{g.imagen}}.jfif">
                     <div style="vertical-align: bottom;">
                       <h3><strong style="font-family: Verdana, Geneva, Tahoma, sans-serif; ">{{g.libro}}</strong></h3>
                       <h6 style="margin-top: -12px; size: 1px;">{{g.autor}}</h6>
@@ -144,5 +144,43 @@
   <!--termina usuario comun humano normal -->
   <!--comienza usuario admin agregacion de libros-->
   <div *ngIf="this.userService.admin==true">
+    <h2>Agregar Libros</h2>
+    <form #form="ngForm" (ngSubmit)="addBook(form)">
+      <ion-item>
+        <ion-label position="floating">Título del libro</ion-label>
+        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.libro" name="libro" ngControl="libro"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Autor(es)</ion-label>
+        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.autor" name="autor" ngControl="autor"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">No. de páginas</ion-label>
+        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.paginas" name="paginas" ngControl="paginas"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Sinopsis</ion-label>
+        <ion-textarea clear-input [(ngModel)]="libroToAdd.sinopsis" ngControl="sinopsis" name="sinopsis" spellcheck="true"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Género</ion-label>
+        <ion-select #mySelect [value]="selectedGenero" [selectedText]="selectedGenero" (ionChange)="selectChanged(mySelect.value)" required>
+          <ion-select-option *ngFor="let gen of genero">{{ gen }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Cantidad disponible</ion-label>
+        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.stok" name="stok" ngControl="stok"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Precio</ion-label>
+        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.precio" name="precio" ngControl="precio"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Nombre de la imagen</ion-label>
+        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.imagen" name="imagen" ngControl="imagen"></ion-input>
+      </ion-item>
+      <ion-button ion-button type="submit" expand="block">Agregar Libro</ion-button>
+    </form>
   </div>
 </ion-content>
