@@ -60,3 +60,19 @@
       display: none;
     }
   }
+
+  .libroTable{
+    border-bottom: 10px; 
+    border-bottom-color:slid black; 
+    border-top: 15px; 
+    border-top-color: chartreuse;
+  }
+
+  .tCenter{
+    text-align: center;
+  }
+
+  ion-grid {
+    height: 100%;
+    justify-content: center;
+}

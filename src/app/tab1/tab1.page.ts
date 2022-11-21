@@ -35,7 +35,8 @@ export class Tab1Page implements OnInit {
   gn2: number;
   genero: Array<string>;
   selectedGenero: string;
-
+  libroCounter: number;
+  editLibro: boolean;
   public us: boolean;
 
   slideOptions = {
@@ -170,6 +171,8 @@ export class Tab1Page implements OnInit {
       "Psicologico"
     ]
     this.selectedGenero = "";
+    this.libroCounter = 0;
+    this.editLibro = false;
   }
 
   //logout
@@ -353,22 +356,67 @@ export class Tab1Page implements OnInit {
     this.selectedGenero = selectedgen;
   };
 
-  addBook(form: NgForm) {
+  addBook() {
     this.libroToAdd.genero = this.selectedGenero;
     if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
       this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
       this.EAlert();
     } else {
       this.dato.libros.push(this.libroToAdd);
-      this.libros.push(this.libroToAdd);
-      this.sliderOne.slidesItems.push(this.libroToAdd);
       this.dato.posLibro(this.libroToAdd).subscribe(res => {
         this.selectedGenero = "";
-        form.reset();
         this.libroToAdd = new Libros();
         this.RAlert();
       })
     }
+  }
+
+  editBook(){
+    this.libroToAdd.genero = this.selectedGenero;
+    if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
+      this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
+      this.EAlert();
+    } else {
+      console.log("si lo hice");
+      this.dato.actLibro(this.libroToAdd).subscribe(res => {
+        this.selectedGenero = "";
+        console.log(res);
+        this.editLibro = false;
+        this.libroToAdd = new Libros();
+        this.RAlert();
+      })
+    }
+  }
+
+  cancelEdit(libro?: Libros){
+    this.libroToAdd = new Libros();
+    this.selectedGenero = '';
+    this.editLibro = false;
+  }
+
+  fillLibro(id){
+    let libro;
+    this.libros.forEach(e => {
+      if (e._id===id) {
+        libro=e;
+        this.libroToAdd=libro;
+        this.selectedGenero=libro.genero;
+        this.editLibro = true;
+      }
+    });
+  }
+
+  clearLibro(id){
+    let r=0;
+    this.libros.forEach(e => {
+      if (e._id!=id) {
+        r++;
+      } 
+    });
+    this.dato.deleteLibro(id).subscribe(res =>{
+      console.log(res);
+      this.libros.splice(r,1);
+    })
   }
 
   async presentAlert() {

@@ -26,11 +26,11 @@ export class DatosService {
   }
 
   actLibro(libro: Libros) {
-    return this.httpClient.put(this.urlPeticionNode + libro._id + this.tokenbd.tokenBd, libro)
+    return this.httpClient.put(this.urlPeticionNode + libro._id + "&" + this.tokenbd.tokenBd , libro)
   }
 
   deleteLibro(_id: string) {
-    return this.httpClient.delete(this.urlPeticionNode + _id + this.tokenbd.tokenBd);
+    return this.httpClient.delete(this.urlPeticionNode + _id + "&" + this.tokenbd.tokenBd);
   }
 
 

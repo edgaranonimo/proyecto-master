@@ -33,12 +33,12 @@
   <ion-item style="border-radius: 40px; width: 70%; border:solid; border-color:rgb(122, 42, 42);">
     <ion-label position="floating"> Buscar</ion-label>
   <ion-input name="buscar" style="text-transform: lowercase;" [(ngModel)]="buscar" (keyup.enter)="busca()"></ion-input>
-  <ion-icon slot="end" name="search-outline"></ion-icon>
+  <ion-icon slot="end" name="search-outline" (click)="busca()"></ion-icon>
 </ion-item>
 </div>
 
-<!--comienza admin-->
-  <ion-card *ngIf="userService.tipoUser=='admin'">
+<!--comienza admin
+  <ion-card *ngIf="userService.admin==false">
   <form #librosform="ngForm" >
     <ion-item>
     <ion-label position="floating">Titulo del libro</ion-label>
@@ -75,22 +75,26 @@
   <ion-button (click)="addlibro(librosform)">Guardar</ion-button>
   <ion-button (click)="resetForm(librosform)">Limpiar</ion-button>
   </form>
-  <!--termina admin-->
-  <!--usuario comun humano-->
-</ion-card>
+  </ion-card>
+  termina admin
+  usuario comun humano-->
+<div *ngIf="busco==true">
+  <h2 style="text-align: center; margin-top: 10%; color: darkgrey;">No se han encontrado resultados</h2>
+</div>
 <div *ngFor="let book of this.busqueda">
 <ion-card style="margin-left: 10%; margin-right: 10%;">
   <ion-card-header>
-    <img src="assets/img/{{book.imagen}}.jpg" style="width: 450px; height: 500px;">
+    <img src="assets/img/{{book.imagen}}.jfif" style="width: 450px; height: 500px;">
   </ion-card-header>
   <ion-card-content>
+    <p>Libro: {{book.libro}}</p>
     <p>Autor: {{book.autor}}</p>
     <p>Paginas: {{book.paginas}}</p>
     <p>Genero: {{book.genero}}</p>
     <div *ngIf="opt==true">
     <p>Sinopsis: {{book.sinopsis}}</p>
     <p>Existencias: {{book.stok}}</p>
-    <p>Precio: ${{book.precio}}mx </p>
+    <p>Precio: ${{book.precio}}MXN </p>
   </div>
   <ion-button color="tertiary"(click)="toggleinfo()" ><div *ngIf="opt==false"> <ion-icon name="add-circle-outline"></ion-icon>Mas informacion</div><div *ngIf="opt==true"><ion-icon name="remove-circle-outline"></ion-icon> Menos informacion</div> </ion-button>
   <ion-button color="warning" (click)="btnCom(book._id)">Agregar al carro | <ion-icon name="cart-outline"></ion-icon></ion-button>

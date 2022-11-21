@@ -25,6 +25,7 @@ export class Tab2Page implements OnInit {
   templ:string;
   temps:string;
   tempa:string;
+  busco:boolean;
   showPassword=false;
   passtogle='eye';
   
@@ -35,6 +36,7 @@ export class Tab2Page implements OnInit {
     this.libros= this.dato.ObtenLibros();
     this.s=0;
     this.usuario=new Users();
+    this.busco=false;
    }
 
    //comienza libro busqueda y adicion
@@ -42,17 +44,26 @@ export class Tab2Page implements OnInit {
 
 busca(){
   this.busqueda=[];
-  for(let item of this.libros){
-   this.tempg=item.genero.toLowerCase();
-   this.tempa=item.autor.toLowerCase();
-   this.templ=item.libro.toLowerCase();
-   this.temps=item.sinopsis.toLowerCase();
-    if(this.tempg.search(this.buscar)!=-1 || this.tempa.search(this.buscar)!=-1 || this.templ.search(this.buscar)!=-1 || this.temps.search(this.buscar)!=-1){
-      this.busqueda.push(item);
-    }
-    /*if(item.genero==this.buscar){
-      this.busqueda.push(item);
-    }*/
+  if (this.buscar!='') {
+    for(let item of this.libros){
+      this.tempg=item.genero.toLowerCase();
+      this.tempa=item.autor.toLowerCase();
+      this.templ=item.libro.toLowerCase();
+      this.temps=item.sinopsis.toLowerCase();
+       if(this.tempg.search(this.buscar)!=-1 || this.tempa.search(this.buscar)!=-1 || this.templ.search(this.buscar)!=-1 || this.temps.search(this.buscar)!=-1){
+         this.busqueda.push(item);
+       }
+       /*if(item.genero==this.buscar){
+         this.busqueda.push(item);
+       }*/
+     }
+  } else {
+    this.Ebusc();   
+  }
+  if (this.busqueda.length<1) {
+    this.busco=true;
+  }else{
+    this.busco=false;
   }
 }
 redirect3(){
@@ -176,5 +187,18 @@ inicReg(){
 
     await alert.present();
   }
+
+  async Ebusc() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Error',
+      subHeader: '',
+      message: 'La busqueda requiere al menos 1 caracter',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
 
 }
