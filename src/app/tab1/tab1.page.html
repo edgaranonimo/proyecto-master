@@ -140,49 +140,54 @@
       </ion-grid>
     </div>
   </div>
+  <ion-button ion-button expand="block" (click)="checkCredential()">{{noCredentials}}</ion-button>
   <!--termina usuario comun humano normal -->
   <!--comienza usuario admin agregacion de libros-->
   <div *ngIf="this.userService.admin==true">
     <h2>Agregar Libros</h2>
-    <form #form="ngForm" >
-      <ion-item>
-        <ion-label position="floating">Título del libro</ion-label>
-        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.libro" name="libro" ngControl="libro"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Autor(es)</ion-label>
-        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.autor" name="autor" ngControl="autor"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">No. de páginas</ion-label>
-        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.paginas" name="paginas" ngControl="paginas"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Sinopsis</ion-label>
-        <ion-textarea clear-input [(ngModel)]="libroToAdd.sinopsis" ngControl="sinopsis" name="sinopsis" spellcheck="true"></ion-textarea>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Género</ion-label>
-        <ion-select #mySelect [value]="selectedGenero" [selectedText]="selectedGenero" (ionChange)="selectChanged(mySelect.value)" required>
-          <ion-select-option *ngFor="let gen of genero">{{ gen }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Cantidad disponible</ion-label>
-        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.stok" name="stok" ngControl="stok"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Precio</ion-label>
-        <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.precio" name="precio" ngControl="precio"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Nombre de la imagen</ion-label>
-        <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.imagen" name="imagen" ngControl="imagen"></ion-input>
-      </ion-item>
-      <ion-button *ngIf="editLibro==false" ion-button type="submit" expand="block" (click)="addBook()">Agregar Libro</ion-button>
-      <ion-button *ngIf="editLibro==true" color="warning" ion-button (click)="editBook()" expand="block">Editar Libro</ion-button>
-      <ion-button *ngIf="editLibro==true" color="secondary" ion-button (click)="cancelEdit()" expand="block">cancelar edicion</ion-button>
-    </form>
+    <div>
+      <form #form="ngForm" >
+        <ion-item>
+          <ion-label position="floating">Título del libro</ion-label>
+          <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.libro" name="libro" ngControl="libro"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Autor(es)</ion-label>
+          <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.autor" name="autor" ngControl="autor"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">No. de páginas</ion-label>
+          <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.paginas" name="paginas" ngControl="paginas"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Sinopsis</ion-label>
+          <ion-textarea clear-input [(ngModel)]="libroToAdd.sinopsis" ngControl="sinopsis" name="sinopsis" spellcheck="true"></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Género</ion-label>
+          <ion-select #mySelect [value]="selectedGenero" [selectedText]="selectedGenero" (ionChange)="selectChanged(mySelect.value)" required>
+            <ion-select-option *ngFor="let gen of genero">{{ gen }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Cantidad disponible</ion-label>
+          <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.stok" name="stok" ngControl="stok"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Precio</ion-label>
+          <ion-input clear-on-edit type="number" required [(ngModel)]="libroToAdd.precio" name="precio" ngControl="precio"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Nombre de la imagen</ion-label>
+          <ion-input clear-on-edit type="text" required [(ngModel)]="libroToAdd.imagen" name="imagen" ngControl="imagen"></ion-input>
+        </ion-item>
+        <div>
+          <ion-button *ngIf="editLibro==false" ion-button type="submit" expand="block" (click)="revisarCredenciales('add')">Agregar Libro</ion-button>
+          <ion-button *ngIf="editLibro==true" color="warning" ion-button (click)="revisarCredenciales('edit')" expand="block">Editar Libro</ion-button>
+        </div>
+        <ion-button *ngIf="editLibro==true" color="secondary" ion-button (click)="cancelEdit()" expand="block">cancelar edicion</ion-button>
+      </form>
+    </div>
     <div *ngIf="editLibro==false" style="margin-top: 50px; margin-left: 10px; margin-right: 10px;" >
       <ion-row>
         <ion-col size="3" class="libroTable"><h4>Nombre del libro</h4></ion-col>

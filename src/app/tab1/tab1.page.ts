@@ -2,11 +2,19 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 import { IonSlides } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { Libros } from '../modelos/libros';
 import { UsuarioService } from '../servicios/usuario.service';
 import { DatosService } from '../servicios/datos.service';
 import { Users } from '../modelos/users';
+import {
+  AvailableResult,
+  BiometryType,
+  NativeBiometric,
+} from 'capacitor-native-biometric';
+import * as CryptoJS from 'crypto-js';
+import { proxyInputs } from '@ionic/angular/directives/proxies-utils';
+
 //import { threadId } from 'node:worker_threads';
 
 @Component({
@@ -32,13 +40,17 @@ export class Tab1Page implements OnInit {
   ms: number;
   pt: string;
   gn: number;
+  key: string;
+  passConfirm: string;
   gn2: number;
+  passTime: boolean;
   genero: Array<string>;
   selectedGenero: string;
   libroCounter: number;
   editLibro: boolean;
   public us: boolean;
-
+  noCredentials: boolean;
+  desktop: boolean;
   slideOptions = {
     on: {
       beforeInit() {
@@ -135,7 +147,8 @@ export class Tab1Page implements OnInit {
   };
   //termina slide funciones
 
-  constructor(public router: Router, public userService: UsuarioService, public dato: DatosService, public alertController: AlertController) {
+  constructor(public router: Router, public userService: UsuarioService, public dato: DatosService,
+    public alertController: AlertController, public platform: Platform) {
     this.us = true;
     this.gn = this.ObtenerLibros();
     this.gn2 = this.inicReg();
@@ -173,6 +186,62 @@ export class Tab1Page implements OnInit {
     this.selectedGenero = "";
     this.libroCounter = 0;
     this.editLibro = false;
+    this.noCredentials = true;
+    this.desktop = false;
+    this.passConfirm = "";
+    this.passTime = false;
+    this.key = '8jf0¡7wsjf09rfj@odfdjlk-d03ue?dfs';
+  }
+
+  setCredential() {
+    // Save user's credentials
+    NativeBiometric.setCredentials({
+      username: this.userService.ActUser.email.toString(),
+      password: this.userService.ActUser.password.toString(),
+      server: 'Libreria',
+    }).then();
+  }
+
+  checkCredential() {
+    console.log(this.platform.platforms(), this.platform.is('desktop'));
+    if (this.platform.is('desktop')) {
+      this.noCredentials = true;
+    } else {
+      this.setCredential();
+      NativeBiometric.isAvailable().then((result: AvailableResult) => {
+        const isAvailable = result.isAvailable;
+        alert('RESULT ' + JSON.stringify(result));
+        // const isFaceId=result.biometryType==BiometryType.FACE_ID;
+        // const isFaceId = result.biometryType == BiometryType.FACE_ID;
+        if (isAvailable) {
+          // Get user's credentials
+          this.noCredentials = false;
+          NativeBiometric.getCredentials({
+            server: 'Libreria',
+          }).then((credentials) => {
+            alert('CREDENTIAL ' + JSON.stringify(credentials));
+            // Authenticate using biometrics before logging the user in
+            NativeBiometric.verifyIdentity({
+              reason: 'For easy log in',
+              title: 'Log in',
+              subtitle: 'Maybe add subtitle here?',
+              description: 'Maybe a description too?',
+            })
+              .then(() => {
+                //     // Authentication successful
+                alert('SUCCESS!!');
+                //     // this.login(credentials.username, credentials.password);
+              })
+              .catch((err) => {
+                //   // Failed to authenticate
+                alert('FAIL!');
+              });
+          });
+        } else {
+          this.noCredentials = true;
+        }
+      });
+    }
   }
 
   //logout
@@ -356,22 +425,32 @@ export class Tab1Page implements OnInit {
     this.selectedGenero = selectedgen;
   };
 
-  addBook() {
-    this.libroToAdd.genero = this.selectedGenero;
-    if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
-      this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
-      this.EAlert();
+  revisarCredenciales(e: string) {
+    this.checkCredential();
+    if (this.noCredentials) {
+      this.presentAlertPass(e);
     } else {
-      this.dato.libros.push(this.libroToAdd);
-      this.dato.posLibro(this.libroToAdd).subscribe(res => {
-        this.selectedGenero = "";
-        this.libroToAdd = new Libros();
-        this.RAlert();
-      })
+      return true;
     }
   }
 
-  editBook(){
+  addBook() {
+    this.libroToAdd.genero = this.selectedGenero;
+      if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
+        this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
+        this.EAlert();
+      } else {
+        this.dato.libros.push(this.libroToAdd);
+        this.dato.posLibro(this.libroToAdd).subscribe(res => {
+          this.selectedGenero = "";
+          this.libroToAdd = new Libros();
+          this.RAlert();
+        })
+      }
+    console.log("antes");
+  }
+
+  editBook() {
     this.libroToAdd.genero = this.selectedGenero;
     if (this.libroToAdd.autor == "" || this.libroToAdd.imagen == "" || this.libroToAdd.genero == "" || this.libroToAdd.libro == "" ||
       this.libroToAdd.paginas == 0 || this.libroToAdd.precio == 0 || this.libroToAdd.sinopsis == "" || this.libroToAdd.stok == 0) {
@@ -386,37 +465,53 @@ export class Tab1Page implements OnInit {
         this.RAlert();
       })
     }
+    console.log("antes");
   }
 
-  cancelEdit(libro?: Libros){
+  cancelEdit(libro?: Libros) {
     this.libroToAdd = new Libros();
+    this.passTime = false;
+    this.desktop = false;
+    this.noCredentials = true;
     this.selectedGenero = '';
     this.editLibro = false;
   }
 
-  fillLibro(id){
+  fillLibro(id) {
     let libro;
     this.libros.forEach(e => {
-      if (e._id===id) {
-        libro=e;
-        this.libroToAdd=libro;
-        this.selectedGenero=libro.genero;
+      if (e._id === id) {
+        libro = e;
+        this.libroToAdd = libro;
+        this.selectedGenero = libro.genero;
         this.editLibro = true;
       }
     });
   }
 
-  clearLibro(id){
-    let r=0;
+  clearLibro(id) {
+    let r = 0;
     this.libros.forEach(e => {
-      if (e._id!=id) {
+      if (e._id != id) {
         r++;
-      } 
+      }
     });
-    this.dato.deleteLibro(id).subscribe(res =>{
+    this.dato.deleteLibro(id).subscribe(res => {
       console.log(res);
-      this.libros.splice(r,1);
+      this.libros.splice(r, 1);
     })
+  }
+
+  async desktopAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Ingreso desde Escritorio',
+      subHeader: '',
+      message: 'No se han detectado biometricos, para guardar introduzca de nuevo su contraseña ',
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   async presentAlert() {
@@ -462,6 +557,65 @@ export class Tab1Page implements OnInit {
       subHeader: '',
       message: 'Debes Iniciar sesion primero',
       buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  async presentAlertEPass() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Error',
+      subHeader: '',
+      message: 'Contraseña incorrecta',
+      buttons: ['OK'],
+
+    });
+    await alert.present();
+  }
+
+  async presentAlertPass(e: string) {
+    let passConfirm = '';
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Autenticaciónn requerida',
+      subHeader: passConfirm,
+      inputs: [
+        {
+          name: 'password',
+          type: 'password',
+          placeholder: 'Ingrese nuevamente su contraseña',
+          value: passConfirm
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+            this.cancelEdit();
+          },
+        },
+        {
+          text: 'Ok',
+          handler: (alertData) => {
+            if (alertData.password == CryptoJS.AES.decrypt(this.userService.ActUser.password.trim(), this.key.trim()).toString(CryptoJS.enc.Utf8)) {
+              if (e=='add') {
+                this.addBook();
+              }
+              if (e=='edit') {
+                this.editBook();
+              }
+            } else {
+              console.log(alertData);
+              this.presentAlertEPass();
+            }
+            console.log('Confirm Ok');
+          },
+        },
+      ],
     });
 
     await alert.present();
