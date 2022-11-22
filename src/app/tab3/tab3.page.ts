@@ -62,7 +62,6 @@ export class Tab3Page implements OnInit {
     this.comprasservice.compras.monto=this.total;
     this.total=0;
       this.router.navigate(['pago']);
-    
     /*this.comprasservice.poscompra(compra).subscribe(res=>{
       this.userService.ActUser.compras=[];
     });*/
